@@ -1,0 +1,22 @@
+btn-delete-history   //Abre el mensaje de alerta para borrar el historial ✔
+--> btn-icon-delete
+
+history-empty //Parrafo de historial vacio 
+
+btn-header-calculator  //Cambiar tema ✔
+--> btn-icon btn-icon-header display-icon-header/hidde-icon-header  
+
+container-options //Opciones de la calculadora
+--> btn btn-option display-btn btn-option-history 
+  --> btn-icon icon-option-calculator
+
+//Mostrar el historial en responsive
+
+btn btn-action || btn btn-action btn-number //Botones de la calculadora
+--> btn-icon icon-action-calculator
+
+alert-options //Mostrar alerta
+--> alert-delete/alert-cancel
+
+container-notification //Mostrar notification
+--> notification-text 
