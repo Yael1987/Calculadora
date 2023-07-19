@@ -107,10 +107,6 @@ export default class Calculator {
         this.evalsPi(lastWord);
         return;
       
-      case "log":
-        this.evalsLog(lastWord);
-        return;
-      
       default:
         break;
     }
