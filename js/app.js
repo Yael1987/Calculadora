@@ -1,13 +1,15 @@
 import Calculator from "./classes/Calculator.js";
-import History from "./classes/History.js";
+import History from "./controllers/History.js";
 import UI from "./classes/UI.js";
 import Storage from "./controllers/Storage.js";
+import Evaluator from "./controllers/Evaluator.js";
 
 //Instances
 const ui = new UI();
 const history = new History();
 const calculator = new Calculator();
 const storage = new Storage();
+const evaluator = new Evaluator();
 
 document.addEventListener("DOMContentLoaded", () => {
   eventListeners();
@@ -19,7 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const closerHistory = document.querySelector(".closer-history");
 
     window.addEventListener('keydown', (e) => {
-      const options = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '.', '%', '(', ')', '/', '!', '+', '*', '-', 'Enter', 'Backspace'];
+      const options = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.', '%', '(', ')', '/', '!', '+', '*', '-', 'Enter', 'Backspace'];
+      
       if (options.includes(e.key)) {
         e.preventDefault();
 
@@ -39,12 +42,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     btnsCalculator.forEach((btn) => {
       btn.addEventListener("click", (e) => {
-        calculator.btnActions(calculator.verifyValue(e));
+        calculator.btnActions(evaluator.verifyValue(e));
       });
     });
 
     btnDelete.addEventListener("click", (e) => {
-      calculator.btnActions(calculator.verifyValue(e));
+      calculator.btnActions(evaluator.verifyValue(e));
     });
 
     btnTheme.addEventListener('click', ui.changeTheme);
@@ -62,4 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
   history.getHistory(savedData);
 });
 
-export {ui, history, calculator, storage};
+export {
+  ui,
+  history,
+  calculator,
+  storage,
+  evaluator
+};
