@@ -2,14 +2,32 @@ import Calculator from "./classes/Calculator.js";
 import History from "./controllers/History.js";
 import UI from "./classes/UI.js";
 import Storage from "./controllers/Storage.js";
-import Evaluator from "./controllers/Evaluator.js";
+
+import Mediator from "./controllers/Mediator.js";
+import StringModifier from "./controllers/StringModifier.js";
+
+import AppError from "./classes/AppError.js";
+
+const test = new StringModifier();
+
+// try {
+//   const operacion = test.modifyString('+');
+
+//   console.log({operacion});
+// } catch (error) {
+//   console.log({
+//     error: error.message
+//   });
+// }
 
 //Instances
 const ui = new UI();
 const history = new History();
 const calculator = new Calculator();
 const storage = new Storage();
-const evaluator = new Evaluator();
+
+const mediator = new Mediator();
+const appError = new AppError();
 
 document.addEventListener("DOMContentLoaded", () => {
   eventListeners();
@@ -20,34 +38,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnDisplayHistory = document.querySelector(".btn-option-history");
     const closerHistory = document.querySelector(".closer-history");
 
-    window.addEventListener('keydown', (e) => {
-      const options = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.', '%', '(', ')', '/', '!', '+', '*', '-', 'Enter', 'Backspace'];
-      
-      if (options.includes(e.key)) {
-        e.preventDefault();
-
-        switch (e.key) {
-          case 'Backspace':
-            calculator.btnActions('delete');
-            return;
-          case 'Enter':
-            calculator.btnActions('result');
-            return;
-          default: 
-            calculator.btnActions(e.key);
-            return;
-        }
-      }
-    })
+    window.addEventListener('keydown', e => mediator.callKeyAction(e))
 
     btnsCalculator.forEach((btn) => {
       btn.addEventListener("click", (e) => {
-        calculator.btnActions(evaluator.verifyValue(e));
+        // calculator.btnActions(evaluator.verifyValue(e));
+        mediator.callBtnAction(e)
       });
     });
 
     btnDelete.addEventListener("click", (e) => {
-      calculator.btnActions(evaluator.verifyValue(e));
+      // calculator.btnActions(evaluator.verifyValue(e));
+      mediator.callBtnAction(e)
     });
 
     btnTheme.addEventListener('click', ui.changeTheme);
@@ -70,5 +72,5 @@ export {
   history,
   calculator,
   storage,
-  evaluator
+  appError
 };
