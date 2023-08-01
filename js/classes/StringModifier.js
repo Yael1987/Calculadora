@@ -1,4 +1,4 @@
-import EntryEvaluator from "../classes/EntryEvaluator.js";
+import EntryEvaluator from "./EntryEvaluator.js";
 import { appError } from "../app.js";
 
 export default class StringModifier {

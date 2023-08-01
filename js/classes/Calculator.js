@@ -1,5 +1,5 @@
 import {history, ui, appError} from "../app.js";
-import StringModifier from "../controllers/StringModifier.js";
+import StringModifier from "./StringModifier.js";
 
 export default class Calculator {
   constructor() {

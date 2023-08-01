@@ -1,5 +1,5 @@
-import EntryValidator from "../classes/EntryValidator.js"
-import Calculator from "../classes/Calculator.js";
+import EntryValidator from "./EntryValidator.js"
+import Calculator from "./Calculator.js";
 
 export default class Mediator{
   constructor() {

@@ -3,8 +3,8 @@ import History from "./controllers/History.js";
 import UI from "./classes/UI.js";
 import Storage from "./controllers/Storage.js";
 
-import Mediator from "./controllers/Mediator.js";
-import StringModifier from "./controllers/StringModifier.js";
+import Mediator from "./classes/Mediator.js";
+import StringModifier from "./classes/StringModifier.js";
 
 import AppError from "./classes/AppError.js";
 
