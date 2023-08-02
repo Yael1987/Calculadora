@@ -1,14 +1,16 @@
 import Calculator from "./classes/Calculator.js";
-import History from "./controllers/History.js";
-import UI from "./classes/UI.js";
-import Storage from "./controllers/Storage.js";
+import UI from "./classes/GeneralUI.js";
 
-import Mediator from "./classes/Mediator.js";
-import StringModifier from "./classes/StringModifier.js";
+import History from "./controllers/History.js";
+import Storage from "./controllers/Storage.js";
 
 import AppError from "./classes/AppError.js";
 
-const test = new StringModifier();
+import Mediator from "./classes/Mediator.js";
+import GeneralUI from "./classes/GeneralUI.js";
+
+
+// const test = new StringModifier();
 
 // try {
 //   const operacion = test.modifyString('+');
@@ -21,9 +23,9 @@ const test = new StringModifier();
 // }
 
 //Instances
-const ui = new UI();
-const history = new History();
+const generalUI = new GeneralUI();
 const calculator = new Calculator();
+const history = new History();
 const storage = new Storage();
 
 const mediator = new Mediator();
@@ -52,23 +54,23 @@ document.addEventListener("DOMContentLoaded", () => {
       mediator.callBtnAction(e)
     });
 
-    btnTheme.addEventListener('click', ui.changeTheme);
-    btnDisplayHistory.addEventListener('click', ui.displayHistoryContainer)
-    closerHistory.addEventListener("click", ui.hideHistoryContainer);
+    btnTheme.addEventListener('click', generalUI.changeTheme);
+    btnDisplayHistory.addEventListener('click', generalUI.displayHistoryContainer)
+    closerHistory.addEventListener("click", generalUI.hideHistoryContainer);
 
-    ui.btnEraseHistory.addEventListener("click", () => {
-      ui.displayPopup();
+    generalUI.btnEraseHistory.addEventListener("click", () => {
+      generalUI.displayPopup();
     });
   }
   
   const savedData = storage.getSavedData();
 
-  ui.applyTheme(savedData);
+  generalUI.applyTheme(savedData);
   history.getHistory(savedData);
 });
 
 export {
-  ui,
+  generalUI,
   history,
   calculator,
   storage,

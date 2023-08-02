@@ -1,4 +1,4 @@
-import { ui, storage } from "../app.js";
+import { storage } from "../app.js";
 
 export default class History {
   constructor() {

@@ -1,28 +1,38 @@
 import EntryValidator from "./EntryValidator.js"
-import Calculator from "./Calculator.js";
+import CalculatorUI from "./CalculatorUi.js";
+
+import { calculator, generalUI } from "../app.js";
 
 export default class Mediator{
   constructor() {
+    this.calculatorResponse = {}
     this.entryValidator = new EntryValidator();
-    this.calculator = new Calculator();
+    this.calculatorUI = new CalculatorUI();
     this.entryValue;
   }
 
   callKeyAction(keydown) {
-    keydown.preventDefault();
-
     if (!this.entryValidator.validateKeyEntry(keydown.key)) return;
+    
+    keydown.preventDefault();
 
     switch (keydown.key) {
       case "Backspace":
-        // calculator.btnActions("delete");
+        return this.callUndoAction();
+      
+      case " ":
         return;
+      
       case "Enter":
         // calculator.btnActions("result");
         return;
+      
+      case "c":
+        return this.callClearAction();
+
       default:
-        // calculator.btnActions(e.key);
-        return;
+        this.entryValue = this.entryValidator.replaceKeyValue(keydown.key);
+        return this.callOperationsActions();
     }
   }
 
@@ -31,18 +41,66 @@ export default class Mediator{
 
     switch (this.entryValue) {
       case "delete":
-
-        break;
+        return this.callUndoAction();
 
       case "clear":
-        break;
+        return this.callClearAction();
 
       case "result":
+        this.callResultAction();
         break;
 
       default:
-        const calculatorResponse = this.calculator.makeOperation(this.entryValue)
-        console.log(calculatorResponse);
+        return this.callOperationsActions();
     }
+  }
+
+  callResultAction() {
+    this.calculatorResponse = calculator.resultOperation();
+    // calculator.clearOperation();
+    if (!this.calculatorResponse.success) {
+      return generalUI.displayNotification(this.calculatorResponse.message);
+    }
+
+    console.log(this.calculatorResponse);
+  }
+
+  callUndoAction() {
+    this.calculatorResponse = calculator.undoOperation();
+
+    if (!this.calculatorResponse.success) {
+      return generalUI.displayNotification(this.calculatorResponse.message);
+    }
+
+    this.calculatorResponse = calculator.makeOperation();
+
+    return this.calculatorUI.renderResult({
+      success: this.calculatorResponse.success,
+      ...this.calculatorResponse.data,
+    });
+  }
+
+  callClearAction() {
+    this.calculatorResponse = calculator.clearOperation();
+
+    if (!this.calculatorResponse.success)
+      return generalUI.displayNotification(this.calculatorResponse.message);
+
+    return this.calculatorUI.resetResult();
+  }
+
+  callOperationsActions(){
+    this.calculatorResponse = calculator.makeOperation(this.entryValue);
+
+    if (!this.calculatorResponse.success) {
+      if (this.calculatorResponse.errorCode === 1001) {
+        return generalUI.displayNotification(this.calculatorResponse.message);
+      }
+    }
+
+    return this.calculatorUI.renderResult({
+        success: this.calculatorResponse.success,
+        ...this.calculatorResponse.data,
+      });
   }
 }

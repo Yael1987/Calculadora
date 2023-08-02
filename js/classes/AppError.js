@@ -7,10 +7,31 @@ export default class AppError{
     return error;
   }
 
+  operationStringError() {
+    const error = new Error("Campo de operacion vacio");
+    error.name = "Fallo en limpiar el string";
+    error.code =  1002;
+    return error;
+  }
+
   operationError() {
-    const error = new Error('No se pudo completar la operacion');
+    const error = new Error('Formato no valido');
     error.name = 'Fallo en la evaluacion del string'
-    error.code = -1002;
+    error.code = -1003;
+    return error;
+  }
+
+  limitStringError() {
+    const error = new Error("Maximo 30 caracteres permitidos");
+    error.name = "Limite de caracteres en el string superado";
+    error.code = 1004;
+    return error;
+  }
+
+  resultOperationError() {
+    const error = new Error("Formato no permitido");
+    error.name = "Fallo en mostrar el resultado";
+    error.code = 1005;
     return error;
   }
 }

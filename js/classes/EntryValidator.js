@@ -20,8 +20,20 @@ export default class EntryValidator {
       "+",
       "*",
       "-",
-      "Enter",
-      "Backspace",
+      "Enter", //Result
+      "Backspace", //Delete
+      " ", //Result
+      "s", //Square
+      "l", //Log
+      "S", //sin
+      "C", //Cos
+      "T", //Tan
+      "a", //Abs
+      "e", //e
+      "r", //root
+      "p", //pi
+      "P", //pow
+      "c", //clear
     ];
   }
 
@@ -41,5 +53,32 @@ export default class EntryValidator {
     }
 
     return click.target.value;
+  }
+
+  replaceKeyValue(keydown) {
+    switch (keydown) {
+      case "s":
+        return 'square';
+      case "l":
+        return 'log';
+      case "S":
+        return 'sin';
+      case "C":
+        return 'cos';
+      case "T":
+        return 'tan';
+      case "a":
+        return 'abs';
+      case "e":
+        return 'e';
+      case "r":
+        return "√";
+      case "p":
+        return 'pi';
+      case "P":
+        return 'pow';
+      default:
+        return;
+    }
   }
 }

@@ -1,4 +1,4 @@
-import {history, ui, appError} from "../app.js";
+import {history, appError} from "../app.js";
 import StringModifier from "./StringModifier.js";
 
 export default class Calculator {
@@ -12,46 +12,6 @@ export default class Calculator {
 
   btnActions(valueBtn) {
     switch (this.value) {
-      case "delete":
-        if (!this.operationString) return;
-
-        if (this.operationString.slice(-1) === "(") {
-
-          if (this.operationString.slice(-2) === "√(") {
-            this.operationString = this.operationString.slice(0, this.operationString.length - 2);
-            this.openParentesis -= 1;
-            this.makeOperation();
-            return;
-          };
-
-          if (['log(', 'abs(', 'sin(', 'cos(', 'tan('].includes(this.operationString.slice(-4))) {
-            this.operationString = this.operationString.slice(0, this.operationString.length - 4);
-            this.openParentesis -= 1;
-            this.makeOperation();
-            return;
-          }
-
-          this.openParentesis -= 1;
-        }
-
-        if (this.operationString.slice(-1) === ")") {
-          this.openParentesis += 1;
-        }
-
-        this.operationString = this.operationString.slice(0, this.operationString.length - 1 );
-
-        this.makeOperation();
-        return;
-
-      case "clear":
-        if (!this.operationString) return;
-
-        this.operationString = "";
-        this.openParentesis = 0;
-
-        this.makeOperation();
-        return;
-
       case "result":
         const operation = this.operationString
               .replaceAll("*", "x")
@@ -62,23 +22,72 @@ export default class Calculator {
         return;
 
       default:
-        if (this.operationString.length > 30) {
-          ui.displayNotification("Solo 30 caracteres permitidos");
-          return;
-        }
-
-        this.clearString();
         return;
     }
   }
 
-  makeOperation(userEntry) {
+  resultOperation() {
     try {
-      this.operationString = this.stringModifier.modifyString(userEntry);
+      this.operationString = this.stringModifier.adaptString();
+
+      return this.makeOperation(null, true);
+    } catch (error) {
+      return {
+        success: false,
+        errorCode: error.code,
+        errorName: error.name,
+        message: error.message,
+      };
+    }
+  }
+
+  clearOperation() {
+    try {
+      this.operationString = this.stringModifier.resetStringData();
+      this.openParentesis = 0;
+
+      return {
+        success: true,
+        message: 'Estado de la calculadora reseteado',
+      }
+    } catch (error) {
+      return {
+        success: false,
+        errorCode: error.code,
+        errorName: error.name,
+        message: error.message,
+      };
+    }
+  }
+
+  undoOperation() {
+    try {
+      this.operationString = this.stringModifier.undoStringData();
+      return {
+        success: true,
+        message: 'Backup string applied'
+      }
+    } catch (error) {
+      return {
+        success: false,
+        errorCode: error.code,
+        errorName: error.name,
+        message: error.message,
+      };
+    }
+  }
+
+  makeOperation(userEntry = null, forResult = false) {
+    try {
+      if (userEntry !== null) {
+        this.operationString = this.stringModifier.modifyString(userEntry);
+      }
+
       this.stringToEvaluate = this.stringModifier.parseOperationString(this.operationString);
       
-      if (this.openParentesis !== 0) 
-        throw appError.operationError();
+      if (!forResult) {
+        if (this.openParentesis !== 0) throw appError.operationError();  
+      }
       
       if (!this.stringToEvaluate || (this.stringToEvaluate.length === 1 && this.stringToEvaluate !== "e")) 
         throw appError.operationError();
@@ -104,7 +113,7 @@ export default class Calculator {
         success: false,
         errorCode: error.code,
         errorName: error.name,
-        error: error.message,
+        message: error.message,
         data: {
           result: this.result,
           operation: this.operationString,

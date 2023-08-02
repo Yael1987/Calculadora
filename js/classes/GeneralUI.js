@@ -1,6 +1,6 @@
 import { history, calculator, storage } from "../app.js";
 
-export default class UI {
+export default class GeneralUI {
   constructor() {
     this.btnEraseHistory = document.querySelector(".btn-delete-history");
     this.divOperations = document.querySelector(".operations");
@@ -35,17 +35,6 @@ export default class UI {
     }
 
     storage.updateSavedTheme(body.classList[0]);
-  }
-
-  renderResult(result, operation) {
-    this.divOperations.textContent = operation;
-
-    if (!result && result !== 0) {
-      this.divResult.innerHTML = this.divResult.innerHTML;
-      return;
-    }
-
-    this.divResult.innerHTML = result;
   }
 
   renderHistoryElement({operations, result}) {
@@ -104,12 +93,6 @@ export default class UI {
       calculator.makeOperation();
       return;
     }
-  }
-
-  displayResult() {
-    this.divOperations.innerText = this.divResult.textContent;
-    calculator.changeOperationString(this.divResult.textContent);
-    this.divResult.innerHTML = "&nbsp;";
   }
 
   addEmptyMessage() {
@@ -194,7 +177,7 @@ export default class UI {
   }
 
   displayNotification(message) {
-    const notification = document.querySelector('.container-notification');
+    const notification = document.querySelector('.notification');
     const notificationText = document.querySelector('.notification-text');
 
     notification.classList.add("display-notification");
