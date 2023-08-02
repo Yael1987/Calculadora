@@ -7,7 +7,7 @@ export default class CalculatorUI {
   renderResult(calculatorData) {
     const { success, operation, result } = calculatorData;
 
-    this.divOperations.textContent = operation || 0;
+    this.divOperations.textContent = operation ? operation.replaceAll('*', 'x') : 0;
 
     if (!success) {
       this.divResult.innerHTML = '&nbsp;';
@@ -22,9 +22,8 @@ export default class CalculatorUI {
     this.divResult.innerHTML = "&nbsp;";
   }
 
-  displayResult() {
-    this.divOperations.innerText = this.divResult.textContent;
-    calculator.changeOperationString(this.divResult.textContent);
+  displayResult({result}) {
+    this.divOperations.innerText = result;
     this.divResult.innerHTML = "&nbsp;";
   }
 }

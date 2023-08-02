@@ -61,8 +61,13 @@ export default class Mediator{
     if (!this.calculatorResponse.success) {
       return generalUI.displayNotification(this.calculatorResponse.message);
     }
-
     console.log(this.calculatorResponse);
+    
+    this.calculatorUI.displayResult(this.calculatorResponse.data);
+    this.calculatorResponse = calculator.clearOperation(true);
+    console.log(this.calculatorResponse);
+
+    
   }
 
   callUndoAction() {

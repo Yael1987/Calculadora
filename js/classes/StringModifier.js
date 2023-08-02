@@ -5,7 +5,6 @@ export default class StringModifier {
   constructor(calculator) {
     this.string = "";
     this.backup = [];
-    // this.openParentesis = 0;
     this.specialSigns = ["π", "%", "e", "!"];
     this.signs = ["+", "-", "*", "/"];
     this.calculator = calculator;
@@ -20,12 +19,13 @@ export default class StringModifier {
     return this.evaluator.evaluateEntry(lastWord, userEntry);
   }
 
-  resetStringData() {
+  resetStringData(result = '') {
     if (!this.string)
       throw appError.operationStringError();
 
-    this.string = "";
+    this.string = result ? result.toString() : "";
     this.backup = [];
+    
     return this.string;
   }
 
@@ -269,8 +269,8 @@ export default class StringModifier {
     return string.replaceAll("π", "pi")
         .replaceAll("√", "sqrt")
         .replaceAll("log", "log10")
-        .replaceAll(/sin\((.*?)\)/g, "sin(unit($1, 'deg'))")
-        .replaceAll(/cos\((.*?)\)/g, "cos(unit($1, 'deg'))")
-        .replaceAll(/tan\((.*?)\)/g, "tan(unit($1, 'deg'))");
+        .replace(/sin\((.*?)\)/g, "sin(unit($1, 'deg'))")
+        .replace(/cos\((.*?)\)/g, "cos(unit($1, 'deg'))")
+        .replace(/tan\((.*?)\)/g, "tan(unit($1, 'deg'))");
   }
 };

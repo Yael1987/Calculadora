@@ -13,12 +13,8 @@ export default class Calculator {
   btnActions(valueBtn) {
     switch (this.value) {
       case "result":
-        const operation = this.operationString
-              .replaceAll("*", "x")
 
         history.saveResult(operation, ui.getResultFromUI());
-
-        ui.displayResult();
         return;
 
       default:
@@ -41,14 +37,15 @@ export default class Calculator {
     }
   }
 
-  clearOperation() {
+  clearOperation(forResult = false) {
     try {
-      this.operationString = this.stringModifier.resetStringData();
+      this.operationString = forResult ? this.stringModifier.resetStringData(this.result) : this.stringModifier.resetStringData();
+      this.result = 0;
       this.openParentesis = 0;
 
       return {
         success: true,
-        message: 'Estado de la calculadora reseteado',
+        message: 'Estado de la calculadora reseteado'
       }
     } catch (error) {
       return {
@@ -104,7 +101,7 @@ export default class Calculator {
         success: true,
         data: {
           result: this.result,
-          operation: this.operationString,
+          operation: this.operationString
         } 
       };
       
