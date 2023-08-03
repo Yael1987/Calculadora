@@ -1,13 +1,18 @@
 import EntryValidator from "./EntryValidator.js"
-import CalculatorUI from "./CalculatorUi.js";
+import Storage from "../controllers/Storage.js";
 
-import { calculator, generalUI } from "../app.js";
+import { calculator, generalUI, history } from "../app.js";
 
 export default class Mediator{
   constructor() {
     this.calculatorResponse = {}
+    this.historyResponse = {}
+    this.uiResponse = {}
+    this.storageResponse = {}
     this.entryValidator = new EntryValidator();
-    this.calculatorUI = new CalculatorUI();
+    this.calculatorUI = generalUI.getCalculatorUI();
+    this.historyUI = generalUI.getHistoryUI();
+    this.storage = new Storage();
     this.entryValue;
   }
 
@@ -16,16 +21,19 @@ export default class Mediator{
     
     keydown.preventDefault();
 
+    if (keydown.key === 'i' && keydown.ctrlKey) {
+      return console.log('Cambio de tema');
+    }
+
     switch (keydown.key) {
       case "Backspace":
         return this.callUndoAction();
       
       case " ":
-        return;
+        return this.callResultAction();
       
       case "Enter":
-        // calculator.btnActions("result");
-        return;
+        return this.callResultAction();
       
       case "c":
         return this.callClearAction();
@@ -47,8 +55,7 @@ export default class Mediator{
         return this.callClearAction();
 
       case "result":
-        this.callResultAction();
-        break;
+        return this.callResultAction();
 
       default:
         return this.callOperationsActions();
@@ -57,17 +64,19 @@ export default class Mediator{
 
   callResultAction() {
     this.calculatorResponse = calculator.resultOperation();
-    // calculator.clearOperation();
     if (!this.calculatorResponse.success) {
       return generalUI.displayNotification(this.calculatorResponse.message);
     }
-    console.log(this.calculatorResponse);
     
-    this.calculatorUI.displayResult(this.calculatorResponse.data);
-    this.calculatorResponse = calculator.clearOperation(true);
-    console.log(this.calculatorResponse);
+    this.historyResponse = history.saveResult(this.calculatorResponse.data);
+    this.storage.updateSavedOperations(this.historyResponse.data)
 
+    this.calculatorUI.displayResult(this.calculatorResponse.data);
+    this.historyUI.renderHistoryElement(this.calculatorResponse.data);
     
+    calculator.clearOperation(true);
+
+    return generalUI.displayNotification(this.historyResponse.message);
   }
 
   callUndoAction() {
@@ -94,7 +103,7 @@ export default class Mediator{
     return this.calculatorUI.resetResult();
   }
 
-  callOperationsActions(){
+  callOperationsActions() {
     this.calculatorResponse = calculator.makeOperation(this.entryValue);
 
     if (!this.calculatorResponse.success) {
@@ -107,5 +116,42 @@ export default class Mediator{
         success: this.calculatorResponse.success,
         ...this.calculatorResponse.data,
       });
+  }
+
+  callChangeThemeAction() {
+    this.uiResponse = generalUI.changeTheme();
+    this.storage.updateSavedTheme(this.uiResponse.data);
+  }
+
+  callHistoryContainer(display = false) {
+    this.historyUI.toogleHistoryContainer(display);
+  }
+
+  async callClearHistory() {
+    this.historyResponse = history.getSavedOperations();
+
+    if (!this.historyResponse.success) return generalUI.displayNotification(this.historyResponse.message);
+
+    this.uiResponse = await generalUI.displayPopup();
+    if (!this.uiResponse.success) return generalUI.displayNotification(this.uiResponse.message);
+    
+    this.storageResponse = this.storage.clearSavedOperations();
+    this.historyUI.clearHistoryHTML();
+    this.historyUI.addEmptyMessage();
+
+    generalUI.displayNotification(this.storageResponse.message)
+  }
+
+  applyUserData() {
+    this.storageResponse = this.storage.getSavedData();
+    if (!this.storageResponse.success) return this.storage.setData();
+
+    generalUI.applyTheme(this.storageResponse.data);
+    history.setSavedOperations(this.storageResponse.data);
+
+    const savedOperations = this.storageResponse.data.operations;
+    for (let i = savedOperations.length - 1; i >= 0; i--) {
+      this.historyUI.renderHistoryElement(savedOperations[i]);
+    }
   }
 }

@@ -1,42 +1,59 @@
+import { appError } from "../app.js";
 export default class Storage{
   constructor() {
-    this.data = {
+    this.userData = {
       theme: "light",
       operations: [],
     };
   }
 
   setData() {
-    localStorage.setItem("datosCalculadora", JSON.stringify({...this.data}));
+    localStorage.setItem("datosCalculadora", JSON.stringify({...this.userData}));
   }
 
   getSavedData() {
     const savedData = JSON.parse(localStorage.getItem("datosCalculadora"));
 
-    if (!savedData) {
-      this.setData();
-      return this.data;
+    try {
+      if (!savedData) {
+        throw appError.storageError();
+      }
+
+      this.userData = savedData;
+  
+      return {
+        success: true,
+        message: 'Datos obtenidos',
+        data: {...this.userData}
+      }
+    } catch (error) {
+      return {
+        success: false,
+        errorCode: error.code,
+        errorName: error.name,
+        message: error.message,
+      };
     }
-    this.data = savedData;
-
-    return this.data;
   }
 
-  updateSavedTheme(newTheme) {
-    this.data.theme = newTheme;
-
-    localStorage.setItem("datosCalculadora", JSON.stringify({ ...this.data }));
+  updateSavedTheme({newTheme}) {
+    this.userData.theme = newTheme;
+    localStorage.setItem("datosCalculadora", JSON.stringify({ ...this.userData }));
   }
 
-  updateSavedOperations(updatedOperations) {
-    this.data.operations = updatedOperations;
-
-    localStorage.setItem("datosCalculadora", JSON.stringify({ ...this.data }));
+  updateSavedOperations({operations}) {
+    this.userData.operations = operations;
+    localStorage.setItem("datosCalculadora", JSON.stringify({ ...this.userData }));
   }
 
   clearSavedOperations() {
-    this.data.operations = [];
+    this.userData.operations = [];
 
-    localStorage.setItem("datosCalculadora", JSON.stringify({...this.data}));
+    localStorage.setItem("datosCalculadora", JSON.stringify({ ...this.userData }));
+    
+    return {
+      success: true,
+      message: 'Historial eliminado'
+    }
   }
 }

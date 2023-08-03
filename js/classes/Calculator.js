@@ -1,4 +1,4 @@
-import {history, appError} from "../app.js";
+import { appError } from "../app.js";
 import StringModifier from "./StringModifier.js";
 
 export default class Calculator {
@@ -8,18 +8,6 @@ export default class Calculator {
     this.stringToEvaluate = "";
     this.openParentesis = 0;
     this.stringModifier = new StringModifier(this);
-  }
-
-  btnActions(valueBtn) {
-    switch (this.value) {
-      case "result":
-
-        history.saveResult(operation, ui.getResultFromUI());
-        return;
-
-      default:
-        return;
-    }
   }
 
   resultOperation() {

@@ -1,14 +1,10 @@
 import Calculator from "./classes/Calculator.js";
-import UI from "./classes/GeneralUI.js";
-
+import GeneralUI from "./classes/GeneralUI.js";
 import History from "./controllers/History.js";
-import Storage from "./controllers/Storage.js";
 
 import AppError from "./classes/AppError.js";
 
 import Mediator from "./classes/Mediator.js";
-import GeneralUI from "./classes/GeneralUI.js";
-
 
 // const test = new StringModifier();
 
@@ -26,7 +22,6 @@ import GeneralUI from "./classes/GeneralUI.js";
 const generalUI = new GeneralUI();
 const calculator = new Calculator();
 const history = new History();
-const storage = new Storage();
 
 const mediator = new Mediator();
 const appError = new AppError();
@@ -43,36 +38,29 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener('keydown', e => mediator.callKeyAction(e))
 
     btnsCalculator.forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        // calculator.btnActions(evaluator.verifyValue(e));
-        mediator.callBtnAction(e)
-      });
+      btn.addEventListener("click", e => mediator.callBtnAction(e));
     });
 
-    btnDelete.addEventListener("click", (e) => {
-      // calculator.btnActions(evaluator.verifyValue(e));
-      mediator.callBtnAction(e)
-    });
+    btnDelete.addEventListener("click", e => mediator.callBtnAction(e));
 
-    btnTheme.addEventListener('click', generalUI.changeTheme);
-    btnDisplayHistory.addEventListener('click', generalUI.displayHistoryContainer)
-    closerHistory.addEventListener("click", generalUI.hideHistoryContainer);
+    btnTheme.addEventListener('click', () => mediator.callChangeThemeAction());
+    btnDisplayHistory.addEventListener('click', () => mediator.callHistoryContainer(true))
+    closerHistory.addEventListener("click", () => mediator.callHistoryContainer());
 
-    generalUI.btnEraseHistory.addEventListener("click", () => {
-      generalUI.displayPopup();
-    });
+    generalUI.btnEraseHistory.addEventListener("click", () => mediator.callClearHistory());
   }
   
-  const savedData = storage.getSavedData();
+  mediator.applyUserData();
 
-  generalUI.applyTheme(savedData);
-  history.getHistory(savedData);
+  // const savedData = storage.getSavedData();
+
+  // generalUI.applyTheme(savedData);
+  // history.getHistory(savedData);
 });
 
 export {
   generalUI,
   history,
   calculator,
-  storage,
   appError
 };

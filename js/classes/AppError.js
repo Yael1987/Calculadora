@@ -34,4 +34,18 @@ export default class AppError{
     error.code = 1005;
     return error;
   }
+
+  historyError() {
+    const error = new Error("Historial vacio");
+    error.name = "Fallo al obtener datos del historial";
+    error.code = 1006;
+    return error;
+  }
+
+  storageError() {
+    const error = new Error("No hay datos guardados aun");
+    error.name = "Fallo al obtener datos datos guardados";
+    error.code = -1007;
+    return error;       
+  }
 }

@@ -1,31 +1,49 @@
-import { storage } from "../app.js";
+import { appError } from "../app.js";
 
 export default class History {
   constructor() {
     this.savedOperations = [];
   }
 
-  getHistory({operations}) {
-    this.savedOperations = operations
+  setSavedOperations({operations}) {
+    this.savedOperations = operations;
+    return {
+      success: true,
+      message: "Historial aplicado",
+    };
+  }
 
-    for (let i = this.savedOperations.length - 1; i >= 0; i--) {
-      ui.renderHistoryElement(this.savedOperations[i]);
+  saveResult(calculatorData) {
+    this.savedOperations.unshift(calculatorData);
+
+    return{
+      success: true,
+      message: 'Operacion guardada',
+      data: {
+        operations: this.savedOperations
+      }
     }
   }
 
-  saveResult(operations, result) {
-
-    const objOperation = {operations, result};
-
-    this.savedOperations.unshift(objOperation);
-    storage.updateSavedOperations(this.savedOperations)
-
-    ui.renderHistoryElement(objOperation);
-  }
-
-  clearHistory() {
-    storage.clearSavedOperations();
-
-    ui.clearHistoryHTML();
+  getSavedOperations() {
+    try {
+      if (this.savedOperations.length === 0)
+        throw appError.historyError();
+      
+      return {
+        success: true,
+        message: 'Historial devuelto',
+        data: {
+          operations: this.savedOperations,
+        }
+      }
+    } catch (error) {
+      return {
+        success: false,
+        errorCode: error.code,
+        errorName: error.name,
+        message: error.message,
+      };
+    }
   }
 }

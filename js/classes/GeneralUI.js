@@ -1,11 +1,11 @@
-import { history, calculator, storage } from "../app.js";
+import HistoryUI from "./HistoryUi.js";
+import CalculatorUI from "./CalculatorUi.js";
 
 export default class GeneralUI {
   constructor() {
     this.btnEraseHistory = document.querySelector(".btn-delete-history");
-    this.divOperations = document.querySelector(".operations");
-    this.divResult = document.querySelector(".result");
-    this.historyContainerOperations = document.querySelector(".container-history-operations");
+    this.calculatorUI = new CalculatorUI();
+    this.historyUI = new HistoryUI();
   }
 
   changeTheme() {
@@ -34,123 +34,39 @@ export default class GeneralUI {
       body.classList.add("light");
     }
 
-    storage.updateSavedTheme(body.classList[0]);
-  }
-
-  renderHistoryElement({operations, result}) {
-    const historyDiv = document.createElement("DIV");
-    historyDiv.classList.add("history-div");
-    historyDiv.onclick = (e) => {
-      this.getOperationFromHistory(e);
+    return {
+      success: true,
+      message: "Tema cambiado correctamente",
+      data: {newTheme: body.classList[0]},
     };
-
-    const historyOperation = document.createElement("DIV");
-    historyOperation.classList.add("operation-history");
-    historyOperation.innerText = operations;
-
-    const historyResult = document.createElement("DIV");
-    historyResult.classList.add("result-history");
-    historyResult.innerText = result;
-
-    historyDiv.appendChild(historyOperation);
-    historyDiv.appendChild(historyResult);
-
-    if (
-      this.historyContainerOperations.children.length > 0 &&
-      !this.historyContainerOperations.children[0].classList.contains(
-        "history-empty"
-      )
-    ) {
-      this.historyContainerOperations.insertBefore(
-        historyDiv,
-        this.historyContainerOperations.children[0]
-      );
-      return;
-    }
-
-    this.clearHistoryHTML();
-    this.historyContainerOperations.appendChild(historyDiv);
-  }
-
-  getOperationFromHistory(e) {
-    if (e.target.classList.contains("result-history")) {
-      this.divOperations.innerText = e.target.innerText;
-      calculator.updateOperationString(e.target.innerText);
-    } else {
-      if (e.target.innerText[0] === "(") {
-        if (this.divOperations.innerText === "0") {
-          this.divOperations.innerText = e.target.innerText;
-          calculator.updateOperationString(e.target.innerText);
-          calculator.makeOperation();
-          return;
-        }
-
-        return;
-      }
-
-      this.divOperations.innerText = e.target.innerText;
-      calculator.updateOperationString(e.target.innerText);
-      calculator.makeOperation();
-      return;
-    }
-  }
-
-  addEmptyMessage() {
-    const message = document.createElement("P");
-    message.classList.add("history-empty");
-    message.textContent = "El historial esta vacío";
-
-    this.historyContainerOperations.appendChild(message);
   }
 
   displayPopup() {
-    const popupAlert = document.querySelector(".popup-alert");
+    return new Promise(resolve => {
+      const popupAlert = document.querySelector(".popup-alert");
+      popupAlert.classList.add("popup-alert-display");
 
-    popupAlert.classList.add("popup-alert-display");
+      popupAlert.addEventListener("click", (e) => {
+        if (e.target.classList.contains("popup-alert") || e.target.classList.contains("alert-cancel")) {
+          popupAlert.classList.remove("popup-alert-display");
 
-    popupAlert.addEventListener("click", (e) => {
-      if (
-        e.target.classList.contains("popup-alert") ||
-        e.target.classList.contains("alert-cancel")
-      ) {
-        popupAlert.classList.remove("popup-alert-display");
-      }
+          resolve({
+            success: false,
+            message: "Accion cancelada",
+          })
+        }
 
-      if (e.target.classList.contains("alert-delete")) {
-        history.clearHistory();
-        popupAlert.classList.remove("popup-alert-display");
+        if (e.target.classList.contains("alert-delete")) {
+          popupAlert.classList.remove("popup-alert-display");
 
-        this.addEmptyMessage();
-        this.displayNotification('Historial borrado')
-      }
-    });
-  }
-
-  clearHistoryHTML() {
-    while (this.historyContainerOperations.firstChild) {
-      this.historyContainerOperations.removeChild(
-        this.historyContainerOperations.firstChild
-      );
-    }
-  }
-
-  getResultFromUI() {
-    return this.divResult.innerText;
-  }
-
-  displayHistoryContainer() {
-    const historyContainer = document.querySelector(".container-history");
-    const closerHistory = document.querySelector(".closer-history");
-
-    historyContainer.classList.add("container-history-display");
-    closerHistory.classList.add("closer-history-display");
-  }
-
-  hideHistoryContainer(e) {
-    const historyContainer = document.querySelector(".container-history");
-
-    historyContainer.classList.remove("container-history-display");
-    e.target.classList.remove("closer-history-display");
+          resolve({
+            success: true,
+            message: "Confirmado el borrar historial",
+          });
+        }
+        
+      });
+    })
   }
 
   applyTheme({theme}) {
@@ -177,18 +93,26 @@ export default class GeneralUI {
   }
 
   displayNotification(message) {
-    const notification = document.querySelector('.notification');
-    const notificationText = document.querySelector('.notification-text');
+    const notification = document.querySelector(".notification");
+    const notificationText = document.querySelector(".notification-text");
 
     notification.classList.add("display-notification");
     notificationText.textContent = message;
 
     notification.onclick = () => {
       notification.classList.remove("display-notification");
-    }
+    };
 
     setTimeout(() => {
       notification.classList.remove("display-notification");
-    }, 2000);
+    }, 1500);
+  }
+
+  getCalculatorUI() {
+    return this.calculatorUI;
+  }
+
+  getHistoryUI() {
+    return this.historyUI;
   }
 }

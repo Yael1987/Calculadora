@@ -34,6 +34,7 @@ export default class EntryValidator {
       "p", //pi
       "P", //pow
       "c", //clear
+      "i"
     ];
   }
 
@@ -78,7 +79,7 @@ export default class EntryValidator {
       case "P":
         return 'pow';
       default:
-        return;
+        return keydown;
     }
   }
 }
