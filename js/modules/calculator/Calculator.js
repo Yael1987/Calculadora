@@ -1,4 +1,4 @@
-import { appError } from "../app.js";
+import { appError } from "../../app.js";
 import StringModifier from "./StringModifier.js";
 
 export default class Calculator {
@@ -103,6 +103,21 @@ export default class Calculator {
           result: this.result,
           operation: this.operationString,
         },
+      };
+    }
+  }
+
+  updateCurrentOperation(uiString) {
+    try {
+      this.operationString = this.stringModifier.updateString(uiString);
+
+      return this.makeOperation(null, true)
+    } catch (error) {
+      return {
+        success: false,
+        errorCode: error.code,
+        errorName: error.name,
+        message: error.message,
       };
     }
   }

@@ -8,11 +8,11 @@ export default class Storage{
   }
 
   setData() {
-    localStorage.setItem("datosCalculadora", JSON.stringify({...this.userData}));
+    localStorage.setItem("calculatorData", JSON.stringify({...this.userData}));
   }
 
   getSavedData() {
-    const savedData = JSON.parse(localStorage.getItem("datosCalculadora"));
+    const savedData = JSON.parse(localStorage.getItem("calculatorData"));
 
     try {
       if (!savedData) {
@@ -38,18 +38,18 @@ export default class Storage{
 
   updateSavedTheme({newTheme}) {
     this.userData.theme = newTheme;
-    localStorage.setItem("datosCalculadora", JSON.stringify({ ...this.userData }));
+    localStorage.setItem("calculatorData", JSON.stringify({ ...this.userData }));
   }
 
   updateSavedOperations({operations}) {
     this.userData.operations = operations;
-    localStorage.setItem("datosCalculadora", JSON.stringify({ ...this.userData }));
+    localStorage.setItem("calculatorData", JSON.stringify({ ...this.userData }));
   }
 
   clearSavedOperations() {
     this.userData.operations = [];
 
-    localStorage.setItem("datosCalculadora", JSON.stringify({ ...this.userData }));
+    localStorage.setItem("calculatorData", JSON.stringify({ ...this.userData }));
     
     return {
       success: true,

@@ -1,5 +1,5 @@
-import EntryValidator from "./EntryValidator.js"
-import Storage from "../controllers/Storage.js";
+import EntryValidator from "../utils/EntryValidator.js"
+import Storage from "./Storage.js";
 
 import { calculator, generalUI, history } from "../app.js";
 
@@ -110,6 +110,10 @@ export default class Mediator{
       if (this.calculatorResponse.errorCode === 1001) {
         return generalUI.displayNotification(this.calculatorResponse.message);
       }
+
+      if (this.calculatorResponse.errorCode === 1004) {
+        return generalUI.displayNotification(this.calculatorResponse.message);
+      }
     }
 
     return this.calculatorUI.renderResult({
@@ -153,5 +157,25 @@ export default class Mediator{
     for (let i = savedOperations.length - 1; i >= 0; i--) {
       this.historyUI.renderHistoryElement(savedOperations[i]);
     }
+  }
+
+  callGetHistoryOperation(e) {
+    this.uiResponse = this.historyUI.getOperationFromHistory(e.target);
+
+    if (!this.uiResponse.success) return;
+
+    this.calculatorResponse = calculator.updateCurrentOperation(this.uiResponse.operation);
+
+    console.log(this.calculatorResponse);
+
+    if (!this.calculatorResponse.success) {
+      if (this.calculatorResponse.errorCode === 1001) 
+        return generalUI.displayNotification(this.calculatorResponse.message);
+    }
+
+    return this.calculatorUI.renderResult({
+      success: this.calculatorResponse.success,
+      ...this.calculatorResponse.data,
+    });
   }
 }

@@ -11,9 +11,6 @@ export default class HistoryUI {
 
     const historyDiv = document.createElement("DIV");
     historyDiv.classList.add("history-div");
-    historyDiv.onclick = (e) => {
-      this.getOperationFromHistory(e);
-    };
 
     const historyOperation = document.createElement("DIV");
     historyOperation.classList.add("operation-history");
@@ -43,27 +40,21 @@ export default class HistoryUI {
     this.historyContainerOperations.appendChild(historyDiv);
   }
 
-  getOperationFromHistory(e) {
-    if (e.target.classList.contains("result-history")) {
-      this.divOperations.innerText = e.target.innerText;
-      calculator.updateOperationString(e.target.innerText);
-    } else {
-      if (e.target.innerText[0] === "(") {
-        if (this.divOperations.innerText === "0") {
-          this.divOperations.innerText = e.target.innerText;
-          calculator.updateOperationString(e.target.innerText);
-          calculator.makeOperation();
-          return;
-        }
+  getOperationFromHistory(target) {
+     if (
+       !target.classList.contains("result-history") &&
+       !target.classList.contains("operation-history")
+     )
+       return {
+         success: false,
+         message: "Click no valido",
+       };
 
-        return;
-      }
-
-      this.divOperations.innerText = e.target.innerText;
-      calculator.updateOperationString(e.target.innerText);
-      calculator.makeOperation();
-      return;
-    }
+    return {
+      success: true,
+      message: "Valor de la operacion devuelto",
+      operation: target.innerText,
+    };
   }
 
   addEmptyMessage() {

@@ -1,5 +1,5 @@
 import EntryEvaluator from "./EntryEvaluator.js";
-import { appError } from "../app.js";
+import { appError } from "../../app.js";
 
 export default class StringModifier {
   constructor(calculator) {
@@ -11,12 +11,60 @@ export default class StringModifier {
     this.evaluator = new EntryEvaluator(this);
   }
 
-  modifyString(userEntry) {
+  modifyString(userEntry, loop = false) {
     if (this.string.length >= 30)
       throw appError.limitStringError();
     const lastWord = this.string.slice(-1);
 
     return this.evaluator.evaluateEntry(lastWord, userEntry);
+  }
+
+  updateString(uiString) {
+    if ((this.string.length + uiString.length) >= 30) throw appError.limitStringError();
+
+    const firstElement = uiString.slice(0, 1);
+    const lastWord = this.string.slice(-1);
+
+    if (lastWord === '.') 
+      throw appError.entryError();      
+    
+    if ([...this.specialSigns, ')'].includes(lastWord) && isNaN(firstElement)) {
+      this.backup.push(this.string);
+      this.string += `*${uiString}`;
+
+      return this.string;
+    } 
+
+    if (isNaN(firstElement) && isNaN(lastWord)) {
+      this.backup.push(this.string);
+      this.string += uiString;
+
+      return this.string;
+    }
+
+    if (!isNaN(lastWord) && isNaN(firstElement)) {
+      this.backup.push(this.string);
+      this.string += `*${uiString}`;
+
+      return this.string;
+    }
+    
+    if (!isNaN(lastWord) && !isNaN(firstElement)) {
+      for (let i = this.string.length - 1; i >= 0; i--){
+        if (this.string[i] === '.') {
+          throw appError.entryError();
+        }
+
+        if (isNaN(this.string[i])) {
+          break;
+        }
+      }
+
+      this.backup.push(this.string)
+      this.string += uiString;
+
+      return this.string;
+    }
   }
 
   resetStringData(result = '') {

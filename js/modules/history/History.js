@@ -1,4 +1,4 @@
-import { appError } from "../app.js";
+import { appError } from "../../app.js";
 
 export default class History {
   constructor() {

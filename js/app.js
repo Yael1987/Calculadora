@@ -1,10 +1,10 @@
-import Calculator from "./classes/Calculator.js";
-import GeneralUI from "./classes/GeneralUI.js";
-import History from "./controllers/History.js";
+import Calculator from "./modules/calculator/Calculator.js";
+import GeneralUI from "./modules/ui/GeneralUI.js";
+import History from "./modules/history/History.js";
 
-import AppError from "./classes/AppError.js";
+import AppError from "./utils/AppError.js";
 
-import Mediator from "./classes/Mediator.js";
+import Mediator from "./controllers/Mediator.js";
 
 // const test = new StringModifier();
 
@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnTheme = document.querySelector(".btn-header-calculator");
     const btnDisplayHistory = document.querySelector(".btn-option-history");
     const closerHistory = document.querySelector(".closer-history");
+    const historyContainer = document.querySelector(".container-history-operations")
 
     window.addEventListener('keydown', e => mediator.callKeyAction(e))
 
@@ -48,6 +49,10 @@ document.addEventListener("DOMContentLoaded", () => {
     closerHistory.addEventListener("click", () => mediator.callHistoryContainer());
 
     generalUI.btnEraseHistory.addEventListener("click", () => mediator.callClearHistory());
+
+    historyContainer.addEventListener("click", e => {
+      mediator.callGetHistoryOperation(e)
+    })
   }
   
   mediator.applyUserData();
